@@ -29,11 +29,11 @@ const AddEditEmployee = () => {
   const { onSubmit } = useAddEmployee(isEditForm!);
 
   const [indexes, setIndexes] = React.useState<Array<number>>(
-    defaultValues.addresses.map((v, i) => i),
+    defaultValues.addresses.map((v, i) => i)
   );
 
   const [openIndexes, setOpenIndexes] = React.useState<Array<boolean>>(
-    defaultValues.addresses.map((v, i) => false),
+    defaultValues.addresses.map((v, i) => false)
   );
 
   const { handleSubmit, control, reset } = useForm<IEmployee>({
@@ -45,7 +45,7 @@ const AddEditEmployee = () => {
     { url: `/employee/${params?.employeeId}` },
     {
       manual: true,
-    },
+    }
   );
 
   useEffect(() => {
@@ -56,6 +56,7 @@ const AddEditEmployee = () => {
 
   useEffect(() => {
     reset({
+      id: employeesData?.id,
       firstName: employeesData?.firstName,
       lastName: employeesData?.lastName,
       email: employeesData?.email,
@@ -65,17 +66,17 @@ const AddEditEmployee = () => {
   }, [employeesData]);
 
   const addAddress = useCallback(() => {
-    setIndexes(prevIndexes => [...prevIndexes, prevIndexes.length]);
+    setIndexes((prevIndexes) => [...prevIndexes, prevIndexes.length]);
     setOpenIndexes([...openIndexes, true]);
   }, []);
 
   const removeAddress = useCallback(
     (index: number) => () => {
-      setIndexes(prevIndexes => [
-        ...prevIndexes.filter(item => item !== index),
+      setIndexes((prevIndexes) => [
+        ...prevIndexes.filter((item) => item !== index),
       ]);
     },
-    [],
+    []
   );
 
   return (
@@ -117,7 +118,7 @@ const AddEditEmployee = () => {
               Add another address
             </Button>
           </Grid>
-          {indexes.map(index => {
+          {indexes.map((index) => {
             const fieldName = `addresses.${index}`;
             return (
               <React.Fragment key={fieldName}>

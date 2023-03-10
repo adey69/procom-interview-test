@@ -8,7 +8,7 @@ interface IAddress {
 }
 
 interface IEmployee extends FieldValues {
-  id?: string;
+  id?: number;
   firstName: string;
   lastName: string;
   email: string;
