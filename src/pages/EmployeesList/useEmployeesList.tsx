@@ -1,18 +1,38 @@
 import useAxios from "axios-hooks";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { GridColDef } from "@mui/x-data-grid";
-import { Typography, Button } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
 
 export const useEmployeesList = () => {
-  const [{ data, loading, error }] = useAxios<IEmployee[]>("/employee");
-  const navigate = useNavigate();
-  const onRowClicked = useCallback(
-    (params: any) => {
-      navigate(`/employee/${params?.id}`);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [recordId, setRecordId] = useState();
+  const [{ data, loading, error }, reFetch] =
+    useAxios<IEmployee[]>("/employee");
+
+  const [, deleteEmployee] = useAxios({ method: "DELETE" }, { manual: true });
+
+  const onDelete = useCallback(
+    async (employeeId: number) => {
+      await deleteEmployee({ url: `/employee/${employeeId}` });
+      reFetch();
     },
-    [navigate]
+    [reFetch],
   );
+
+  const handleClickOpen = useCallback((params: any) => {
+    setRecordId(params?.id);
+    setOpenDialog(true);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setOpenDialog(false);
+  }, []);
+
+  const handleDelete = useCallback(() => {
+    onDelete(recordId!);
+    setOpenDialog(false);
+  }, [recordId]);
 
   const COLUMNS: GridColDef[] = useMemo(
     () => [
@@ -29,12 +49,10 @@ export const useEmployeesList = () => {
         width: 300,
         align: "center",
         headerAlign: "center",
-        valueGetter: (params) => {
-          console.log(params.row);
+        renderCell: params => {
           return (
             <Button component={Link} to={`/employee/${params?.row.id}`}>
-              {params?.row.firstName}
-              {params?.row.lastName}
+              {params.row.firstName} {params?.row.lastName}
             </Button>
           );
         },
@@ -53,15 +71,45 @@ export const useEmployeesList = () => {
         align: "center",
         headerAlign: "center",
       },
+      {
+        field: "actions",
+        headerName: "Actions",
+        minWidth: 250,
+        align: "center",
+        headerAlign: "center",
+        renderCell: params => {
+          console.log({ params });
+          return (
+            <Grid container sx={{ justifyContent: "space-around" }}>
+              <Button
+                variant="contained"
+                component={Link}
+                to={`/editEmployee/${params?.row.id}`}
+              >
+                Edit
+              </Button>
+              <Button
+                color="error"
+                variant="contained"
+                onClick={() => handleClickOpen(params)}
+              >
+                Delete
+              </Button>
+            </Grid>
+          );
+        },
+      },
     ],
-    [data]
+    [data],
   );
 
   return {
     data,
     loading,
     error,
-    onRowClicked,
     COLUMNS,
+    openDialog,
+    handleClose,
+    handleDelete,
   };
 };

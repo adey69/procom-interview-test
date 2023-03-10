@@ -1,6 +1,8 @@
 import {
-  Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
   Grid,
   LinearProgress,
   Stack,
@@ -8,11 +10,12 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { useEmployeesList } from "./useEmployeesList";
 
 const EmployeesList = () => {
-  const { onRowClicked, data, loading, error, COLUMNS } = useEmployeesList();
+  const { data, loading, COLUMNS, openDialog, handleClose, handleDelete } =
+    useEmployeesList();
 
   return (
     <>
@@ -43,6 +46,20 @@ const EmployeesList = () => {
         pageSizeOptions={[5]}
         disableRowSelectionOnClick
       />
+      <Dialog
+        open={openDialog}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Are you sure you want to delete this record?"}
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleDelete}>Yes</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

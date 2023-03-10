@@ -1,54 +1,43 @@
 import useAxios from "axios-hooks";
-import { useCallback, useState } from "react";
 
-export const useAddEmployee = () => {
-  const [addressFormOpen, setAddressFormOpen] = useState(true);
-  const onRemoveAddressClicked = useCallback(() => {
-    setAddressFormOpen(false);
-  }, []);
-
-  const onAddAnotherAddressClicked = useCallback(() => {
-    setAddressFormOpen(true);
-  }, []);
-
-  const onAddAddressClicked = useCallback(
-    (
-      streetName: string,
-      postalCode: string,
-      apartmentNumber: string,
-      state: string,
-      country: string
-    ) => {
-      const address: IAddress = {
-        streetName,
-        postalCode,
-        apartmentNumber,
-        state,
-        country,
-      };
-    },
-    []
-  );
-
-  const onSubmit = (data: IEmployee) => {
-    console.log({ data });
-  };
+export const useAddEmployee = (isEditForm: string) => {
   const [{ data: res, error, loading }, addEmployee] = useAxios(
     { url: "/Employee", method: "POST" },
     {
       manual: true,
-    }
+    },
   );
 
+  const [
+    { data: editData, error: editErr, loading: editLoading },
+    editEmployee,
+  ] = useAxios(
+    { url: `/Employee/${isEditForm}`, method: "PUT" },
+    {
+      manual: true,
+    },
+  );
+
+  const onSubmit = (data: any) => {
+    console.log(data);
+    const requestData: IEmployee = {
+      ...data,
+      addresses: data.addresses.map((address: IAddress) => ({
+        ...address,
+        apartmentNumber: parseInt(address.apartmentNumber.toString()),
+      })),
+    };
+    console.log({ isEditForm });
+    isEditForm
+      ? editEmployee({ data: requestData })
+      : addEmployee({ data: requestData });
+  };
+
   return {
-    addressFormOpen,
     res,
     error,
     loading,
     onSubmit,
     addEmployee,
-    onRemoveAddressClicked,
-    onAddAnotherAddressClicked,
-    onAddAddressClicked,
   };
 };

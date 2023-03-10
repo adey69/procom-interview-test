@@ -1,13 +1,14 @@
+type FieldValues = import("react-hook-form").FieldValues;
 interface IAddress {
   streetName: string;
   postalCode: string;
-  apartmentNumber: string;
+  apartmentNumber: number;
   state: string;
   country: string;
 }
 
-interface IEmployee {
-  id: string;
+interface IEmployee extends FieldValues {
+  id?: string;
   firstName: string;
   lastName: string;
   email: string;

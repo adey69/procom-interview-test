@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { AddEmployee, EmployeeDetails, EmployeesList } from "./pages";
+import { AddEditEmployee, EmployeeDetails, EmployeesList } from "./pages";
 
 export const router = createBrowserRouter([
   {
@@ -8,7 +8,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/add",
-    element: <AddEmployee />,
+    element: <AddEditEmployee />,
+  },
+  {
+    path: "/editEmployee/:employeeId",
+    element: <AddEditEmployee />,
   },
   {
     path: "/employee/:employeeId",

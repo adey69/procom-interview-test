@@ -8,7 +8,7 @@ const EmployeeDetails = () => {
   const params = useParams();
 
   const [{ data, loading }] = useAxios<IEmployee>(
-    `/employee/${params?.employeeId}`
+    `/employee/${params?.employeeId}`,
   );
   console.log({ data });
   if (loading) {
